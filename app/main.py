@@ -1,6 +1,6 @@
 import json
 import sys
-
+import re
 # import bencodepy - available if you need it!
 # import requests - available if you need it!
 
@@ -13,12 +13,34 @@ def decode_bencode(bencoded_value):
         first_colon_index = bencoded_value.find(b":")
         if first_colon_index == -1:
             raise ValueError("Invalid encoded value")
-        return bencoded_value[first_colon_index+1:]
+        num_chars = int(bencoded_value[0:first_colon_index])
+        chars = num_chars + first_colon_index + 1
+        return bencoded_value[first_colon_index+1: chars], chars
     elif chr(bencoded_value[0]) == 'i':
         # print(bencoded_value)
-        integer = bencoded_value.find(b"e")
+        end = bencoded_value.find(b"e")
+        start = bencoded_value.find(b'i')
+        if start ==-1 or end ==-1:
+            raise ValueError("Invalid encoded value")
         # print(bencoded_value[1:integer])
-        return int(bencoded_value[1:integer])
+        return int(bencoded_value[start+1:end]), int(end+1)
+    elif chr(bencoded_value[0]) == 'l':
+        res, chars= decode_bencode_list(bencoded_value)
+        # print(res, chars)
+        return res, chars
+def decode_bencode_list(bencoded_value):
+    res=[]
+    cursor =1
+    while(chr(bencoded_value[cursor])!= "e"):
+        # print(bencoded_value[cursor:])
+        decoded, chars = decode_bencode(bencoded_value[cursor:])
+        # print(decoded, chars)
+        res.append(decoded)
+        cursor+=chars
+    chars= cursor+1
+    # print(res)
+    return res, chars
+        
 
 
 def main():
@@ -40,6 +62,8 @@ def main():
 
         # Uncomment this block to pass the first stage
         print(json.dumps(decode_bencode(bencoded_value), default=bytes_to_str))
+        decoded, _ = decode_bencode(bencoded_value)
+        print(json.dumps(decoded, default=bytes_to_str))
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
