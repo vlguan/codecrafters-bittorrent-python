@@ -47,10 +47,10 @@ def decode_bencode_dict(bencoded_value):
     res = {}
     cursor =1
     while(chr(bencoded_value[cursor])!= "e"):
-        decodedValue, vchars = decode_bencode(bencoded_value[cursor:])
-        cursor += vchars
         decodedKey, kchars = decode_bencode(bencoded_value[cursor:])
         cursor += kchars
+        decodedValue, vchars = decode_bencode(bencoded_value[cursor:])
+        cursor += vchars
         res[decodedKey.decode('utf-8')] = decodedValue
     chars = cursor+1
     return res, chars
