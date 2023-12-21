@@ -23,7 +23,7 @@ def decode_bencode(bencoded_value):
         if start ==-1 or end ==-1:
             raise ValueError("Invalid encoded value")
         # print(bencoded_value[1:integer])
-        return int(bencoded_value[start+1:end]), int(end+1)
+        return int(bencoded_value[start+1:end]), end + 1
     elif chr(bencoded_value[0]) == 'l':
         res, chars= decode_bencode_list(bencoded_value)
         # print(res, chars)
@@ -48,6 +48,7 @@ def decode_bencode_dict(bencoded_value):
     array =[]
     cursor =1
     while(chr(bencoded_value[cursor])!= "e"):
+        print(chr(bencoded_value[cursor]))
         decoded, chars = decode_bencode(bencoded_value[cursor:])
         if (isinstance(decoded, bytes)):
             array.append(decoded.decode('utf-8'))
@@ -84,6 +85,11 @@ def main():
         # print(json.dumps(decode_bencode(bencoded_value), default=bytes_to_str))
         decoded, _ = decode_bencode(bencoded_value)
         print(json.dumps(decoded, default=bytes_to_str))
+    elif command == "info":
+        filepath = sys.argv[2].encode()
+        with open(filepath, 'rb') as file:
+            decoded_data, _ = decode_bencode(file.read())
+            print(decoded_data)
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
