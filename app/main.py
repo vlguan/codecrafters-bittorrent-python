@@ -48,7 +48,6 @@ def decode_bencode_dict(bencoded_value):
     array =[]
     cursor =1
     while(chr(bencoded_value[cursor])!= "e"):
-        print(chr(bencoded_value[cursor]))
         decoded, chars = decode_bencode(bencoded_value[cursor:])
         if (isinstance(decoded, bytes)):
             array.append(decoded.decode('utf-8'))
