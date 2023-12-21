@@ -83,7 +83,7 @@ def main():
                 return data.decode()
         with open(filepath, 'rb') as file:
             decoded_data, _ = decode_bencode(file.read())
-            sha_hash = decoded_data['info']['hash']
+            sha_hash = decoded_data['info']
             hash_obj = hashlib.sha1(sha_hash)
             hex_dig = hash_obj.hexdigest()
             print(f"Tracker URL: {decoded_data['announce'].decode()}")
