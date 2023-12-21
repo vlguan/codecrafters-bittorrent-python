@@ -118,7 +118,8 @@ def main():
             print(f"Info Hash: {hex_dig}") 
             print(f"Piece Length: {decoded_data['info']['piece length']}")
             print("Piece Hashes:")
-            [print(piece_hash) for piece_hash in piece_hashes]
+            for piece_hash in piece_hashes:
+                print(piece_hash)
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
