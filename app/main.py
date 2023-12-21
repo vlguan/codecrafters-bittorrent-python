@@ -78,6 +78,9 @@ def main():
         print(json.dumps(decoded, default=bytes_to_str))
     elif command == "info":
         filepath = sys.argv[2].encode()
+        def bytes_to_str(data):
+            if isinstance(data, bytes):
+                return data.decode()
         with open(filepath, 'rb') as file:
             decoded_data, _ = decode_bencode(file.read())
             print("Tracker URL:", json.dumps(decoded_data['announce'],default=bytes_to_str))
