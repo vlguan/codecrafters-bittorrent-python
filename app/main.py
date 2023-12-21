@@ -23,7 +23,7 @@ def decode_bencode(bencoded_value):
         if start ==-1 or end ==-1:
             raise ValueError("Invalid encoded value")
         # print(bencoded_value[1:integer])
-        return int(bencoded_value[start+1:end]), end + 1
+        return int(bencoded_value[start+1:end]).replace(b"~", b"-"), end + 1
     elif chr(bencoded_value[0]) == 'l':
         res, chars= decode_bencode_list(bencoded_value)
         # print(res, chars)
