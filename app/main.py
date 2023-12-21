@@ -6,7 +6,7 @@ import hashlib
 
 def encode_bencode(decoded_value):
     if isinstance(decoded_value, int):
-        return f"i:{decoded_value}e".encode()
+        return f"i{decoded_value}e".encode()
     elif isinstance(decoded_value, str):
         return f"{len(decoded_value)}:{decoded_value}".encode()
     elif isinstance(decoded_value, bytes):
