@@ -1,6 +1,7 @@
 import json
 import sys
 import hashlib
+import binascii
 # import bencodepy - available if you need it!
 # import requests - available if you need it!
 
@@ -107,9 +108,17 @@ def main():
             sha_hash = encode_bencode(decoded_data['info'])
             hash_obj = hashlib.sha1(sha_hash)
             hex_dig = hash_obj.hexdigest()
+            pieces = decoded_data['info']['pieces']
+            piece_hashes=[]
+            for i in range(0, len(pieces), 20):
+                piece_hashes.append(pieces[i:i+20]) 
+            piece_hashes = [binascii.hexlify(piece).decode for piece in piece_hashes]
             print(f"Tracker URL: {decoded_data['announce'].decode()}")
             print(f"Length: {decoded_data['info']['length']}")
             print(f"Info Hash: {hex_dig}") 
+            print(f"Piece Length: {decoded_data['info']['piece length']}")
+            print("Piece Hashes:")
+            [print(piece_hash) for piece_hash in piece_hashes]
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
