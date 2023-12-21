@@ -85,6 +85,7 @@ def main():
             decoded_data, _ = decode_bencode(file.read())
             print(f"Tracker URL: {decoded_data['announce'].decode()}")
             print(f"Length: {decoded_data['info']['length']}")
+            print(f"Info Hash: {decoded_data['info']['pieces']}")
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
