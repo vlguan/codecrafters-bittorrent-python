@@ -15,7 +15,10 @@ def decode_bencode(bencoded_value):
             raise ValueError("Invalid encoded value")
         return bencoded_value[first_colon_index+1:]
     else:
-        raise NotImplementedError("Only strings are supported at the moment")
+        # print(bencoded_value)
+        integer = bencoded_value.find(b"e")
+        # print(bencoded_value[1:integer])
+        return bencoded_value[1:integer]
 
 
 def main():
