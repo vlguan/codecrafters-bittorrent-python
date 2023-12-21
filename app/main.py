@@ -45,19 +45,14 @@ def decode_bencode_list(bencoded_value):
     return res, chars
 def decode_bencode_dict(bencoded_value):
     res = {}
-    array =[]
     cursor =1
     while(chr(bencoded_value[cursor])!= "e"):
-        decoded, chars = decode_bencode(bencoded_value[cursor:])
-        array.append(decoded.decode("utf-8"))
-        cursor+=chars
+        decodedValue, vchars = decode_bencode(bencoded_value[cursor:])
+        cursor += vchars
+        decodedKey, kchars = decode_bencode(bencoded_value[cursor:])
+        cursor += kchars
+        res[decodedKey.decode('utf-8')] = decodedValue
     chars = cursor+1
-    p1=0
-    p2=1
-    while p2 < len(array):
-        res[array[p1]]=array[p2]
-        p1+=2
-        p2+=2
     return res, chars
 
 def main():
