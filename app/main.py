@@ -57,8 +57,6 @@ def decode_bencode_dict(bencoded_value):
     chars = cursor+1
     p1=0
     p2=1
-    print(array)
-    # [foo,bar,hello,52]
     while p2 < len(array):
         res[array[p1]]=array[p2]
         p1+=2
