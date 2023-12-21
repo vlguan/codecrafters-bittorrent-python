@@ -28,6 +28,9 @@ def decode_bencode(bencoded_value):
         res, chars= decode_bencode_list(bencoded_value)
         # print(res, chars)
         return res, chars
+    elif chr(bencoded_value[0]) == 'd':
+        res, chars = decode_bencode_dict(bencoded_value)
+        return res, chars
 def decode_bencode_list(bencoded_value):
     res=[]
     cursor =1
@@ -40,8 +43,27 @@ def decode_bencode_list(bencoded_value):
     chars= cursor+1
     # print(res)
     return res, chars
-        
-
+def decode_bencode_dict(bencoded_value):
+    res = {}
+    array =[]
+    cursor =1
+    while(chr(bencoded_value[cursor])!= "e"):
+        decoded, chars = decode_bencode(bencoded_value[cursor:])
+        if (isinstance(decoded, bytes)):
+            array.append(decoded.decode('utf-8'))
+        else:
+            array.append(decoded)
+        cursor+=chars
+    chars = cursor+1
+    p1=0
+    p2=1
+    print(array)
+    # [foo,bar,hello,52]
+    while p2 < len(array):
+        res[array[p1]]=array[p2]
+        p1+=2
+        p2+=2
+    return res, chars
 
 def main():
     command = sys.argv[1]
