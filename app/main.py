@@ -1,6 +1,6 @@
 import json
 import sys
-import re
+import hashlib
 # import bencodepy - available if you need it!
 # import requests - available if you need it!
 
@@ -83,9 +83,12 @@ def main():
                 return data.decode()
         with open(filepath, 'rb') as file:
             decoded_data, _ = decode_bencode(file.read())
+            sha_hash = decoded_data['info']['pieces']
+            hash_obj = hashlib.sha1(sha_hash)
+            hex_dig = hash_obj.hexdigest()
             print(f"Tracker URL: {decoded_data['announce'].decode()}")
             print(f"Length: {decoded_data['info']['length']}")
-            print(f"Info Hash: {decoded_data['info']['pieces']}")
+            print(f"Info Hash: {hex_dig}") 
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
