@@ -4,6 +4,27 @@ import hashlib
 # import bencodepy - available if you need it!
 # import requests - available if you need it!
 
+def encode_bencode(decoded_value):
+    if isinstance(decoded_value, int):
+        return f"i:{decoded_value}e".encode()
+    elif isinstance(decoded_value, str):
+        return f"{len(decoded_value)}:{decoded_value}".encode()
+    elif isinstance(decoded_value, bytes):
+        return f"{len(decoded_value)}:".encode()+decoded_value
+    elif isinstance(decoded_value, list):
+        res = "l".encode()
+        for i in decoded_value:
+            res += encode_bencode(i)
+        res += "e".encode()
+        return res
+    elif isinstance(decoded_value, dict):
+        res = "d".encode()
+        for key, val in decoded_value.items():
+            res += encode_bencode(key) + encode_bencode(val)
+        res += "e".encode()
+        return res
+    else:
+        raise TypeError("Unsupported type")
 # Examples:
 #
 # - decode_bencode(b"5:hello") -> b"hello"
@@ -83,7 +104,7 @@ def main():
                 return data.decode()
         with open(filepath, 'rb') as file:
             decoded_data, _ = decode_bencode(file.read())
-            sha_hash = decoded_data['info']
+            sha_hash = encode_bencode(decoded_data['info'])
             hash_obj = hashlib.sha1(sha_hash)
             hex_dig = hash_obj.hexdigest()
             print(f"Tracker URL: {decoded_data['announce'].decode()}")
