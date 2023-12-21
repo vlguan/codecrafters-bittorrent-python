@@ -84,7 +84,7 @@ def main():
         with open(filepath, 'rb') as file:
             decoded_data, _ = decode_bencode(file.read())
             print("Tracker URL:", json.dumps(decoded_data['announce'],default=bytes_to_str))
-            print("Length:", json.dumps(decoded_data['length'],default=bytes_to_str))
+            print("Length:", json.dumps(decoded_data['info']['length'],default=bytes_to_str))
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
