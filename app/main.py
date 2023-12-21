@@ -14,11 +14,11 @@ def decode_bencode(bencoded_value):
         if first_colon_index == -1:
             raise ValueError("Invalid encoded value")
         return bencoded_value[first_colon_index+1:]
-    else:
+    elif chr(bencoded_value[0]) == 'i':
         # print(bencoded_value)
         integer = bencoded_value.find(b"e")
         # print(bencoded_value[1:integer])
-        return bencoded_value[1:integer]
+        return int(bencoded_value[1:integer])
 
 
 def main():
