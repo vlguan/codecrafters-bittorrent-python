@@ -147,7 +147,7 @@ def main():
             response = requests.get(track_url, params=urlencode(params))
             response_data = response.content
             decoded_response = decode_bencode(response_data)
-            print(decoded_response[0])
+            # print(decoded_response[0])
             peers = decoded_response[0]['peers']
             for i in range(0, len(peers)):
                 peer = peers[i:i+6]
