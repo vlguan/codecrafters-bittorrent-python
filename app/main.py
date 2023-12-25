@@ -133,7 +133,7 @@ def main():
                 return data.decode()
         with open(filepath, 'rb') as file:
             decoded_data, _ = decode_bencode(file.read())
-            piece_hash = hashlib.sha1(encode_bencode(decoded_data)).diget()
+            piece_hash = hashlib.sha1(encode_bencode(decoded_data)).digest()
             params = {
                 'info_hash': piece_hash,
                 'peer_id': '00112233445566778899',
