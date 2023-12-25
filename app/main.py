@@ -149,7 +149,7 @@ def main():
             decoded_response = decode_bencode(response_data)
             # print(decoded_response[0])
             peers = decoded_response[0]['peers']
-            for i in range(0, len(peers)):
+            for i in range(0, len(peers), 6):
                 peer = peers[i:i+6]
                 ip = struct.unpack('!BBBB', peer[:4])
                 port = struct.unpack('!H', peer[4:])[0]
