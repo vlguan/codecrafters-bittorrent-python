@@ -126,7 +126,7 @@ def main():
             print("Piece Hashes:")
             for piece_hash in piece_hashes:
                 print(piece_hash)
-    elif command == "peer":
+    elif command == "peers":
         filepath = sys.argv[2].encode()
         def bytes_to_str(data):
             if isinstance(data, bytes):
