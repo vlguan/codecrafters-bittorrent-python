@@ -2,6 +2,9 @@ import json
 import sys
 import hashlib
 import binascii
+import requests
+from urllib.parse import urlencode
+import struct
 # import bencodepy - available if you need it!
 # import requests - available if you need it!
 
@@ -26,6 +29,15 @@ def encode_bencode(decoded_value):
         return res
     else:
         raise TypeError("Unsupported type")
+def infoHasher(sha_hash ,decoded_data):
+    hash_obj = hashlib.sha1(sha_hash)
+    hex_dig = hash_obj.hexdigest()
+    pieces = decoded_data['info']['pieces']
+    piece_hashes=[]
+    for i in range(0, len(pieces), 20):
+        piece_hashes.append(pieces[i:i+20]) 
+    piece_hashes = [binascii.hexlify(piece).decode() for piece in piece_hashes]
+    return hex_dig, piece_hashes
 # Examples:
 #
 # - decode_bencode(b"5:hello") -> b"hello"
@@ -106,13 +118,7 @@ def main():
         with open(filepath, 'rb') as file:
             decoded_data, _ = decode_bencode(file.read())
             sha_hash = encode_bencode(decoded_data['info'])
-            hash_obj = hashlib.sha1(sha_hash)
-            hex_dig = hash_obj.hexdigest()
-            pieces = decoded_data['info']['pieces']
-            piece_hashes=[]
-            for i in range(0, len(pieces), 20):
-                piece_hashes.append(pieces[i:i+20]) 
-            piece_hashes = [binascii.hexlify(piece).decode() for piece in piece_hashes]
+            hex_dig, piece_hashes = infoHasher(sha_hash, decoded_data)
             print(f"Tracker URL: {decoded_data['announce'].decode()}")
             print(f"Length: {decoded_data['info']['length']}")
             print(f"Info Hash: {hex_dig}") 
@@ -120,6 +126,34 @@ def main():
             print("Piece Hashes:")
             for piece_hash in piece_hashes:
                 print(piece_hash)
+    elif command == "peer":
+        filepath = sys.argv[2].encode()
+        def bytes_to_str(data):
+            if isinstance(data, bytes):
+                return data.decode()
+        with open(filepath, 'rb') as file:
+            decoded_data, _ = decode_bencode(file.read())
+            piece_hash = hashlib.sha1(encode_bencode(decoded_data)).diget()
+            params = {
+                'info_hash': piece_hash,
+                'peer_id': '00112233445566778899',
+                'port': 6881,
+                'uploaded': 0,
+                'downloaded':0,
+                'left': decoded_data['info']['length'],
+                'compact':1
+            }
+            track_url = decoded_data['announce'].decode()
+            response = requests.get(track_url, params=urlencode(params))
+            response_data = response.content
+            decoded_response = decode_bencode(response_data)
+            print(decoded_response)
+            peers = decoded_response['peers']
+            for i in range(0, len(peers)):
+                peer = peers[i:i+6]
+                ip = struct.unpack('!BBBB', peer[:4])
+                port = struct.unpack('!H', peer[4:])[0]
+                print(f"{ip[0]}.{ip[1]}.{ip[2]}.{ip[3]}:{port}")
     else:
         raise NotImplementedError(f"Unknown command {command}")
 
